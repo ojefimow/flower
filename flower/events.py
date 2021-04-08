@@ -51,15 +51,18 @@ class EventsState(State):
             task_name = event.get('name', '')
             alert_name = None
             try:
-                alert_name = ast.literal_eval(event['args'])
-                alert_name = alert_name[0].get('search_name', '')
+                # alert_name = ast.literal_eval(event['args'])
+                # alert_name = alert_name[0].get('search_name', '')
+                alert_name = event['args'].partition("search_name': '")[
+                    2].partition("', '")[0]
             except:
                 pass
             if not task_name and task_id in self.tasks:
                 task_name = self.tasks[task_id].name or ''
             if not alert_name and task_id in self.tasks:
-                alert_name = ast.literal_eval(self.tasks[task_id].args)[
-                    0].get('search_name', '') or ''
+                # alert_name = ast.literal_eval(self.tasks[task_id].args)[0].get('search_name', '') or ''
+                alert_name = self.tasks[task_id].args.partition(
+                    "search_name': '")[2].partition("', '")[0]
             self.metrics.events.labels(
                 worker_name, event_type, task_name, alert_name).inc()
 
