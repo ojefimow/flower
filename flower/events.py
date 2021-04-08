@@ -49,7 +49,7 @@ class EventsState(State):
         if event_type.startswith('task-'):
             task_id = event['uuid']
             task_name = event.get('name', '')
-            alert_name = ''
+            alert_name = None
             try:
                 alert_name = ast.literal_eval(event['args'])
                 alert_name = alert_name[0].get('search_name', '')
