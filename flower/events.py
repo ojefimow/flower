@@ -57,7 +57,6 @@ class EventsState(State):
                 pass
             if not task_name and task_id in self.tasks:
                 task_name = self.tasks[task_id].name or ''
-            if not alert_name and task_id in self.tasks:
                 alert_name = self.tasks[task_id].args or ''
             self.metrics.events.labels(
                 worker_name, event_type, task_name, alert_name).inc()
