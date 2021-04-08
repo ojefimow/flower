@@ -3,7 +3,7 @@ import shelve
 import logging
 import threading
 import collections
-
+import ast
 from functools import partial
 
 import celery
@@ -50,7 +50,8 @@ class EventsState(State):
         if event_type.startswith('task-'):
             task_id = event['uuid']
             task_name = event.get('name', '')
-            alert_name = event['args'].get('search_name', '')
+            alert_name = ast.literal_eval(event['args'])[0]
+            alert_name = alert_name.get('search_name', '')
             if not task_name and task_id in self.tasks:
                 task_name = self.tasks[task_id].name or ''
             self.metrics.events.labels(
