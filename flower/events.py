@@ -41,6 +41,7 @@ class EventsState(State):
         self.metrics = PrometheusMetrics()
 
     def event(self, event):
+        print(event)
         worker_name = event['hostname']
         event_type = event['type']
 
