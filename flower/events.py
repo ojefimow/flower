@@ -26,8 +26,10 @@ logger = logging.getLogger(__name__)
 
 
 class PrometheusMetrics(object):
-    events = PrometheusCounter('flower_events_total', "Number of events", ['worker', 'type', 'task'])
-    runtime = Histogram('flower_task_runtime_seconds', "Task runtime", ['worker', 'task'])
+    events = PrometheusCounter('flower_events_total', "Number of events", [
+                               'worker', 'type', 'task', 'alert_name'])
+    runtime = Histogram('flower_task_runtime_seconds',
+                        "Task runtime", ['worker', 'task'])
 
 
 class EventsState(State):
@@ -47,13 +49,16 @@ class EventsState(State):
         if event_type.startswith('task-'):
             task_id = event['uuid']
             task_name = event.get('name', '')
+            alert_name = event['args'].get('search_name', '')
             if not task_name and task_id in self.tasks:
                 task_name = self.tasks[task_id].name or ''
-            self.metrics.events.labels(worker_name, event_type, task_name).inc()
+            self.metrics.events.labels(
+                worker_name, event_type, task_name, alert_name).inc()
 
             runtime = event.get('runtime', 0)
             if runtime:
-                self.metrics.runtime.labels(worker_name, task_name).observe(runtime)
+                self.metrics.runtime.labels(
+                    worker_name, task_name).observe(runtime)
 
         # Send event to api subscribers (via websockets)
         classname = api.events.getClassName(event_type)
