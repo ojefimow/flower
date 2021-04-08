@@ -53,7 +53,7 @@ class EventsState(State):
                 alert_name = ast.literal_eval(event['args'])
                 alert_name = alert_name[0].get('search_name', '')
             except:
-                pass
+                alert_name = ''
             if not task_name and task_id in self.tasks:
                 task_name = self.tasks[task_id].name or ''
             if not alert_name and task_id in self.tasks:
