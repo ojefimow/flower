@@ -49,11 +49,12 @@ class EventsState(State):
         if event_type.startswith('task-'):
             task_id = event['uuid']
             task_name = event.get('name', '')
+            alert_name = ''
             try:
                 alert_name = ast.literal_eval(event['args'])
                 alert_name = alert_name[0].get('search_name', '')
             except:
-                alert_name = ''
+                pass
             if not task_name and task_id in self.tasks:
                 task_name = self.tasks[task_id].name or ''
             if not alert_name and task_id in self.tasks:
